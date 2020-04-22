@@ -87,7 +87,14 @@ function Add-XMailboxFolderPermission {
       The following roles apply specifically to calendar folders:
       * AvailabilityOnly: View only availability data
       * LimitedDetails: View availability data with subject and location
+   .PARAMETER Credential
+      Remote PSSession credentials. If not specified and required, will be prompted.
+
+      Not required at all (will not be prompted either) if an existing PSSession is detected.
+   .PARAMETER WhatIf
+      Supports WhatIf parameter. No changes will be made to target identity. PSSession is created and removed.
    .NOTES
+      Debug parameter for detailed diagnostics. Debug and WhatIf can be combined.
    .INPUTS
       System.String
       You can pipe target identities to this cmdlet.
@@ -107,7 +114,9 @@ function Add-XMailboxFolderPermission {
    .EXAMPLE
       Get-Mailbox | Add-XMailboxFolderPermission -User "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -AccessRight "Reviewer"
 
-      Grants source users "Alice.Foo" and "Bob.Bar" the "Reviewer" access right to all Mailbox calendars (piped via pipeline) in the organization. Don't do this.
+      Grants source users "Alice.Foo" and "Bob.Bar" the "Reviewer" access right to all Mailbox calendars (piped via pipeline) in the organization.
+      
+      Demonstrates pipeline input, but not an administratively recommended example.
    #>
    [CmdletBinding(SupportsShouldProcess,ConfirmImpact='None')]
    param(
@@ -115,15 +124,15 @@ function Add-XMailboxFolderPermission {
          Position=0,
          ValueFromPipeline=$true,
          Mandatory=$true,
-         HelpMessage='Target mailbox(es) and folder. Accepts array input. Consider using IdentitySuffix when passing multiple Identity')]
+         HelpMessage='Target mailbox(s) and folder. Accepts array input. Consider using IdentitySuffix when passing multiple Identity')]
       [String[]] $Identity,
       [parameter(
          Mandatory=$true,
-         HelpMessage='Source User(s) to have permissions applied to target Identity mailbox(es) and folder. Accepts array input')]
+         HelpMessage='Source user(s) to have permissions applied to target identity mailbox(s) and folder. Accepts array input')]
       [String[]] $User,
       [parameter(
          Mandatory=$true,
-         HelpMessage='Specifies permission(s) to add for the source User(s) on the target Identity mailbox(es) folder. Accepts array input')]
+         HelpMessage='Specifies permission(s) to add for the source User(s) on the target Identity mailbox(s) folder. Accepts array input')]
       [String[]] $AccessRight,
       [parameter(
          Mandatory=$false,
@@ -297,7 +306,9 @@ function Add-XMailboxFolderPermission {
       # Cleanup PSSession only if it was created here. Exchange Online permits a finite number of active sessions per credential.
       if(-not $ExistingPSSession) {
          Write-Debug ($MyInvocation.MyCommand.Name + ': Cleanup PSSession')
-         Remove-PSSession -Session $Session
+         # Explicit -WhatIf:$false to ensure cleanup PSSession if it was created earlier, even with an active -WhatIf. Otherwise -WhatIf is passed,
+         # session is not cleaned up, and the Exchange Online remote session limit can be reached on subsequent runs.
+         Remove-PSSession -Session $Session -WhatIf:$false
       }
 
       Write-Debug ($MyInvocation.MyCommand.Name + ': End block end')
