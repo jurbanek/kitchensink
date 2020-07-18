@@ -1,122 +1,122 @@
 function Add-XMailboxFolderPermission {
    <#
    .SYNOPSIS
-      Within Exchange Online, apply multiple access rights for multiple source user(s) on multiple target identity(s)
+   Within Exchange Online, apply multiple access rights for multiple source user(s) on multiple target identity(s)
    .DESCRIPTION
-      The 'X' is for 'multi'. Within Exchange Online, apply multiple access rights for multiple source user(s) on multiple target identity(s)
-      Identity parameter, User parameter, and AccessRights parameter all accept array input. The resulting operations are foiled/multiplied out.
-      Will make use of existing remote PSSession to Exchange Online if exists. If not, will create a remote PSSession to Exchange Online.
+   The 'X' is for 'multi'. Within Exchange Online, apply multiple access rights for multiple source user(s) on multiple target identity(s)
+   Identity parameter, User parameter, and AccessRights parameter all accept array input. The resulting operations are foiled/multiplied out.
+   Will make use of existing remote PSSession to Exchange Online if exists. If not, will create a remote PSSession to Exchange Online.
    .PARAMETER Identity
-      Identity parameter specifies the target mailbox and folder. The syntax is <Mailbox>:\<Folder>. For the value of <Mailbox>, you can use any value that uniquely identifies the mailbox.
+   Identity parameter specifies the target mailbox and folder. The syntax is <Mailbox>:\<Folder>. For the value of <Mailbox>, you can use any value that uniquely identifies the mailbox.
 
-      For example:
-      * Name
-      * Display name
-      * Alias
-      * Distinguished name (DN)
-      * Canonical DN
-      * <domain name>\<account name>
-      * Email address
-      * GUID
-      * LegacyExchangeDN
-      * SamAccountName
-      * User ID or user principal name (UPN)
+   For example:
+   * Name
+   * Display name
+   * Alias
+   * Distinguished name (DN)
+   * Canonical DN
+   * <domain name>\<account name>
+   * Email address
+   * GUID
+   * LegacyExchangeDN
+   * SamAccountName
+   * User ID or user principal name (UPN)
 
-      Example values for the Identity parameter are Alice.Foo:\Calendar or Bob.Bar@acme.com:\Marketing\Reports.
+   Example values for the Identity parameter are Alice.Foo:\Calendar or Bob.Bar@acme.com:\Marketing\Reports.
    .PARAMETER IdentitySuffix
-      IdentitySuffix parameter is appended verbatim to each Identity parameter as a nicety. The idea is to, optionally, make the <Mailbox>:\<Folder> string build easier.
+   IdentitySuffix parameter is appended verbatim to each Identity parameter as a nicety. The idea is to, optionally, make the <Mailbox>:\<Folder> string build easier.
 
-      For example:
-         -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar"
-      Results in the following identities being operated on:
-         "Alice.Foo:\Calendar"
-         "Bob.Bar:\Calendar"
+   For example:
+      -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar"
+   Results in the following identities being operated on:
+      "Alice.Foo:\Calendar"
+      "Bob.Bar:\Calendar"
 
-      Given the IdentitySuffix parameter is optional, be cautious when using IdentitySuffix with an already valid <Mailbox>:\<Folder> for Identity.
+   Given the IdentitySuffix parameter is optional, be cautious when using IdentitySuffix with an already valid <Mailbox>:\<Folder> for Identity.
 
-      For example:
-         -Identity "Alice.Foo:\Calendar","Bob.Bar:\Calendar" -IdentitySuffix ":\Calendar"
-      Results in the following INVALID identities
-         "Alice.Foo:\Calendar:\Calendar"
-         "Bob.Bar:\Calendar:\Calendar"
+   For example:
+      -Identity "Alice.Foo:\Calendar","Bob.Bar:\Calendar" -IdentitySuffix ":\Calendar"
+   Results in the following INVALID identities
+      "Alice.Foo:\Calendar:\Calendar"
+      "Bob.Bar:\Calendar:\Calendar"
    .PARAMETER User
-      User parameter specifies who's granted permission to the mailbox folder. Valid values are mail-enabled security principals (mail-enabled accounts or groups that have security identifiers or SIDs that can have permissions assigned to them).
+   User parameter specifies who's granted permission to the mailbox folder. Valid values are mail-enabled security principals (mail-enabled accounts or groups that have security identifiers or SIDs that can have permissions assigned to them).
       
-      For example:
-      * User mailboxes
-      * Mail users
-      * Mail-enabled security groups
-      You can use any value that uniquely identifies the user or group.
+   For example:
+   * User mailboxes
+   * Mail users
+   * Mail-enabled security groups
+   You can use any value that uniquely identifies the user or group.
 
-      For example:
-      * Name
-      * Display name
-      * Alias
-      * Distinguished name (DN)
-      * Canonical DN
-      * Email address
-      * GUID
+   For example:
+   * Name
+   * Display name
+   * Alias
+   * Distinguished name (DN)
+   * Canonical DN
+   * Email address
+   * GUID
    .PARAMETER AccessRight
-      The AccessRight parameter specifies the permissions that you want to add for the user on the mailbox folder.
+   The AccessRight parameter specifies the permissions that you want to add for the user on the mailbox folder.
 
-      You can specify individual folder permissions or roles, which are combinations of permissions. You can specify multiple permissions and roles separated by commas.
+   You can specify individual folder permissions or roles, which are combinations of permissions. You can specify multiple permissions and roles separated by commas.
 
-      The following individual permissions are available:
-      * CreateItems: The user can create items within the specified folder.
-      * CreateSubfolders: The user can create subfolders in the specified folder.
-      * DeleteAllItems: The user can delete all items in the specified folder.
-      * DeleteOwnedItems: The user can only delete items that they created from the specified folder.
-      * EditAllItems: The user can edit all items in the specified folder.
-      * EditOwnedItems: The user can only edit items that they created in the specified folder.
-      * FolderContact: The user is the contact for the specified public folder.
-      * FolderOwner: The user is the owner of the specified folder. The user can view the folder, move the move the folder, and create subfolders. The user can't read items, edit items, delete items, or create items.
-      * FolderVisible: The user can view the specified folder, but can't read or edit items within the specified public folder.
-      * ReadItems: The user can read items within the specified folder.
+   The following individual permissions are available:
+   * CreateItems: The user can create items within the specified folder.
+   * CreateSubfolders: The user can create subfolders in the specified folder.
+   * DeleteAllItems: The user can delete all items in the specified folder.
+   * DeleteOwnedItems: The user can only delete items that they created from the specified folder.
+   * EditAllItems: The user can edit all items in the specified folder.
+   * EditOwnedItems: The user can only edit items that they created in the specified folder.
+   * FolderContact: The user is the contact for the specified public folder.
+   * FolderOwner: The user is the owner of the specified folder. The user can view the folder, move the move the folder, and create subfolders. The user can't read items, edit items, delete items, or create items.
+   * FolderVisible: The user can view the specified folder, but can't read or edit items within the specified public folder.
+   * ReadItems: The user can read items within the specified folder.
 
-      The roles that are available, along with the permissions that they assign, are described in the following list:
-      * Author:CreateItems, DeleteOwnedItems, EditOwnedItems, FolderVisible, ReadItems
-      * Contributor:CreateItems, FolderVisible
-      * Editor:CreateItems, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderVisible, ReadItems
-      * None:FolderVisible
-      * NonEditingAuthor:CreateItems, FolderVisible, ReadItems
-      * Owner:CreateItems, CreateSubfolders, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderContact, FolderOwner, FolderVisible, ReadItems
-      * PublishingEditor:CreateItems, CreateSubfolders, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderVisible, ReadItems
-      * PublishingAuthor:CreateItems, CreateSubfolders, DeleteOwnedItems, EditOwnedItems, FolderVisible, ReadItems
-      * Reviewer:FolderVisible, ReadItems
+   The roles that are available, along with the permissions that they assign, are described in the following list:
+   * Author:CreateItems, DeleteOwnedItems, EditOwnedItems, FolderVisible, ReadItems
+   * Contributor:CreateItems, FolderVisible
+   * Editor:CreateItems, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderVisible, ReadItems
+   * None:FolderVisible
+   * NonEditingAuthor:CreateItems, FolderVisible, ReadItems
+   * Owner:CreateItems, CreateSubfolders, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderContact, FolderOwner, FolderVisible, ReadItems
+   * PublishingEditor:CreateItems, CreateSubfolders, DeleteAllItems, DeleteOwnedItems, EditAllItems, EditOwnedItems, FolderVisible, ReadItems
+   * PublishingAuthor:CreateItems, CreateSubfolders, DeleteOwnedItems, EditOwnedItems, FolderVisible, ReadItems
+   * Reviewer:FolderVisible, ReadItems
 
-      The following roles apply specifically to calendar folders:
-      * AvailabilityOnly: View only availability data
-      * LimitedDetails: View availability data with subject and location
+   The following roles apply specifically to calendar folders:
+   * AvailabilityOnly: View only availability data
+   * LimitedDetails: View availability data with subject and location
    .PARAMETER Credential
-      Remote PSSession credentials. If not specified and required, will be prompted.
+   Remote PSSession credentials. If not specified and required, will be prompted.
 
-      Not required at all (will not be prompted either) if an existing PSSession is detected.
+   Not required at all (will not be prompted either) if an existing PSSession is detected.
    .PARAMETER WhatIf
-      Supports WhatIf parameter. No changes will be made to target identity. PSSession is created and removed.
+   Supports WhatIf parameter. No changes will be made to target identity. PSSession is created and removed.
    .NOTES
-      Debug parameter for detailed diagnostics. Debug and WhatIf can be combined.
+   Debug parameter for detailed diagnostics. Debug and WhatIf can be combined.
    .INPUTS
-      System.String
-      You can pipe target identities to this cmdlet.
+   System.String
+   You can pipe target identities to this cmdlet.
    .OUTPUTS
-      None
+   None
    .EXAMPLE
-      Add-XMailboxFolderPermission -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -User "Charlie.Baz" -AccessRight "Reviewer" 
-         and
-      Add-XMailboxFolderPermission -Identity "Alice.Foo:\Calendar,"Bob.Bar:\Calendar" -User "Charlie.Baz" -AccessRight "Reviewer" 
+   PS> Add-XMailboxFolderPermission -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -User "Charlie.Baz" -AccessRight "Reviewer" 
+      and
+   PS> Add-XMailboxFolderPermission -Identity "Alice.Foo:\Calendar,"Bob.Bar:\Calendar" -User "Charlie.Baz" -AccessRight "Reviewer" 
          
-      Are equivalent and demonstrate the -IdentitySuffix parameter.
+   Are equivalent and demonstrate the -IdentitySuffix parameter.
    .EXAMPLE
-      Add-XMailboxFolderPermission -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -User "Charlie.Baz","David.Qux" -AccessRight "FolderVisible","ReadItems" 
+   PS> Add-XMailboxFolderPermission -Identity "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -User "Charlie.Baz","David.Qux" -AccessRight "FolderVisible","ReadItems" 
 
-      Example with multiple source users applying multiple access rights to multiple target identities.
-      Source users "Charlie.Baz" and "David.Qux" will be granted "FolderVisible" and "ReadItems" access rights to target identities "Alice.Foo:\Calendar" and "Bob.Bar:\Calendar"
+   Example with multiple source users applying multiple access rights to multiple target identities.
+   Source users "Charlie.Baz" and "David.Qux" will be granted "FolderVisible" and "ReadItems" access rights to target identities "Alice.Foo:\Calendar" and "Bob.Bar:\Calendar"
    .EXAMPLE
-      Get-Mailbox | Add-XMailboxFolderPermission -User "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -AccessRight "Reviewer"
+   PS> Get-Mailbox | Add-XMailboxFolderPermission -User "Alice.Foo","Bob.Bar" -IdentitySuffix ":\Calendar" -AccessRight "Reviewer"
 
-      Grants source users "Alice.Foo" and "Bob.Bar" the "Reviewer" access right to all Mailbox calendars (piped via pipeline) in the organization.
+   Grants source users "Alice.Foo" and "Bob.Bar" the "Reviewer" access right to all Mailbox calendars (piped via pipeline) in the organization.
       
-      Demonstrates pipeline input, but not an administratively recommended example.
+   Demonstrates pipeline input, but not an administratively recommended example.
    #>
    [CmdletBinding(SupportsShouldProcess,ConfirmImpact='None')]
    param(
