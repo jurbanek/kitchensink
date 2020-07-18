@@ -23,7 +23,7 @@ function Expand-MapDownloadData{
    This PowerShell function is little more than an in-order binary file appender/merger and extracter.
    .Parameter InputPath
    File system path where ".chunk" files are located
-   .Parameter InputPath
+   .Parameter OutputPath
    File system path where where merged ".chunk" files and extracted content will be placed
    .Parameter WhatIf
    Supports WhatIf
