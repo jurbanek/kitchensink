@@ -1,9 +1,9 @@
 function Expand-MapDownloadData{
    <#
    .SYNOPSIS
-   Map Download Data Processor for 2018 Subuaru Outback Navigation System
+   Map Download Data Processor for 2019 Subuaru Outback Navigation System
    .DESCRIPTION
-   Map Download Data Processor for 2018 Subuaru Outback Navigation System
+   Map Download Data Processor for 2019 Subuaru Outback Navigation System
 
    Download data through Map Download tool at https://subaru-maps.com/
    The tool then needs to write the map data to a USB flash drive which is
@@ -17,7 +17,7 @@ function Expand-MapDownloadData{
    This PowerShell function takes an InputPath to the downloaded ".chunk" files and an OutputPath where the extracted
    contents will be placed. The chunk files are commonly located in the users home directory (see example)
    
-   For my 2018 Subuaru Outback navigation system, the extracted contents ("update" folder and all children) can be dropped
+   For my 2019 Subuaru Outback navigation system, the extracted contents ("update" folder and all children) can be dropped
    into the root of a NTFS formatted filesystem on removable media, plugged into the car via USB, and then the car turned on.
 
    This PowerShell function is little more than an in-order binary file appender/merger and extracter.
